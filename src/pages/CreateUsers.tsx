@@ -118,32 +118,46 @@ export default function CreateUser() {
     setIsLoading(true);
 
     try {
-    const response = await fetch("http://localhost:3001/api/create-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+      const response = await fetch("http://localhost:3001/api/create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Erro ao criar usuário.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao criar usuário.");
+      }
+
+      toast({
+        title: "Usuário criado com sucesso!",
+        description: `${formData.name} foi adicionado ao sistema.`,
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+        team: "",
+        type: "user",
+        startDate: new Date().toISOString().split("T")[0],
+      });
+
+      navigate("/create");
+
+    } catch (error) {
+      toast({
+        title: "Erro ao criar usuário",
+        description: error.message || "Tente novamente em alguns instantes.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    toast({
-      title: "Usuário criado com sucesso!",
-      description: `${formData.name} foi adicionado ao sistema.`,
-    });
-
-    navigate("/manage-users");
-  } catch (error) {
-    toast({
-      title: "Erro ao criar usuário",
-      description: error.message || "Tente novamente em alguns instantes.",
-      variant: "destructive"
-    });
-  }
   };
 
   const handleInputChange = (field, value) => {
@@ -173,7 +187,7 @@ export default function CreateUser() {
               </div>
             </div>
             <Button
-              variant="outline"
+              /* variant="outline" */
               onClick={() => navigate("/")}
               className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 text-white"
             >
@@ -397,7 +411,7 @@ export default function CreateUser() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/manage-users")}
+              onClick={() => navigate("/manage")}
               className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 text-white"
             >
               Cancelar
